@@ -11,7 +11,7 @@ Built with LangChain, FAISS, Gradio, LangServe, and FastAPI.
 ### Step 1: Clone and enter the project
 
 ```bash
-cd smart-contract-assistant
+cd smart-contract-assistant-Alx-software-eng
 ```
 
 ### Step 2: Create a virtual environment
