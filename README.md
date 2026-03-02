@@ -69,10 +69,43 @@ All documents:
 
 --------------------------------------------------
 
+How to Set Up and Run
+Step 1: Clone and enter the project
+cd smart-contract-assistant
+Step 2: Create a virtual environment
+python -m venv .venv
+source .venv/bin/activate   # on Linux/Mac
+# .venv\Scripts\activate    # on Windows
+
+Step 3: Install dependencies
+pip install -r requirements.txt
+This installs everything: LangChain, FAISS, Gradio, FastAPI, file parsers, etc.
+
+Step 4: Set up your API keys
+Copy the example env file:
+
+cp .env.example .env
+Then open .env and fill in your keys:
+
+DEEPSEEK_API_KEY — get one from platform.deepseek.com
+GOOGLE_API_KEY — get one from aistudio.google.com/apikey
+The other settings (model names, chunk size, etc.) have sensible defaults, so you can leave them as-is.
+
+Step 5: Start the backend server
+python server.py
+This starts the FastAPI server on http://localhost:9012. Keep this terminal open.
+
+Step 6: Start the Gradio UI
+Open a second terminal (make sure you activate the venv again) and run:
+
+python app.py
+Then open http://localhost:7860 in your browser. That's it — you should see the app.
+
 File Structure
 --------------------------------------------------
 
 smart-contract-assistant/
+
 │
 ├── config.py        -> Loads API keys & settings from .env
 │                      Provides get_llm() and get_embedder()
