@@ -1,4 +1,4 @@
-# AI-Chatbot 
+# Smart Contract Summary & Q&A Assistant
 #Smart Contract Summary & Q&A Assistant
 Upload your PDF or DOCX contracts and ask questions about them. The app retrieves relevant sections from the document and uses an LLM to generate grounded answers — so you get real information, not hallucinations.
 
