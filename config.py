@@ -3,14 +3,14 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=True)
 
 
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 
 
-LLM_MODEL = os.getenv("LLM_MODEL", "deepseek-chat")
+LLM_MODEL = os.getenv("LLM_MODEL", "gemini-2.5-flash")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "models/gemini-embedding-001")
 
 
@@ -26,20 +26,27 @@ os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 
 def get_llm():
-    """Returns a DeepSeek LLM client (OpenAI-compatible)."""
-    from langchain_openai import ChatOpenAI
-
-    return ChatOpenAI(
-        model=LLM_MODEL,
-        api_key=DEEPSEEK_API_KEY,
-        base_url="https://api.deepseek.com",
-    )
+    """Returns a Google Gemini or DeepSeek LLM client based on LLM_MODEL."""
+    if LLM_MODEL.startswith("gemini"):
+        from langchain_google_genai import ChatGoogleGenerativeAI
+        return ChatGoogleGenerativeAI(
+            model=LLM_MODEL,
+            google_api_key=GOOGLE_API_KEY,
+        )
+    else:
+        from langchain_openai import ChatOpenAI
+        return ChatOpenAI(
+            model=LLM_MODEL,
+            api_key=DEEPSEEK_API_KEY,
+            base_url="https://api.deepseek.com",
+        )
 
 
 def get_embedder():
-
     from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
+    if not GOOGLE_API_KEY:
+        raise ValueError("GOOGLE_API_KEY is empty. Check your .env file.")
     return GoogleGenerativeAIEmbeddings(
         model=EMBEDDING_MODEL,
         google_api_key=GOOGLE_API_KEY,

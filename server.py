@@ -41,7 +41,7 @@ class QuestionRequest(BaseModel):
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
 
-    save_path = os.path.join(UPLOADS_DIR, file.filename)
+    save_path = os.path.join(UPLOADS_DIR, os.path.basename(file.filename))
     with open(save_path, "wb") as f:
         content = await file.read()
         f.write(content)

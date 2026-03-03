@@ -75,9 +75,16 @@ def run_evaluation_stream(num_questions=3):
         )
 
         response = llm.invoke(prompt).content
-        parts = response.split("\n\n", 1)
-        question_part = parts[0].strip()
-        answer_part = parts[1].strip() if len(parts) > 1 else ""
+        question_part, answer_part = "", ""
+        for line in response.splitlines():
+            if line.lower().startswith("question:"):
+                question_part = line.split(":", 1)[1].strip()
+            elif line.lower().startswith("answer:"):
+                answer_part = line.split(":", 1)[1].strip()
+
+        if not question_part or not answer_part:
+            yield f"Warning: could not parse Q&A pair {i + 1}, skipping.\n"
+            continue
 
         questions.append(question_part)
         ground_truths.append(answer_part)
@@ -89,7 +96,7 @@ def run_evaluation_stream(num_questions=3):
     yield "\n--- Step 2/3: Getting RAG answers ---\n"
 
     for i, question in enumerate(questions):
-        yield f"Asking RAG question {i + 1}/{num_questions}..."
+        yield f"Asking RAG question {i + 1}/{len(questions)}..."
 
         rag_answer = ask_question(question)
         rag_answers.append(rag_answer)
@@ -101,6 +108,7 @@ def run_evaluation_stream(num_questions=3):
 
     yield "\n--- Step 3/3: Judging answers ---\n"
 
+    num_questions = len(questions)
     for i in range(num_questions):
         yield f"Judging answer {i + 1}/{num_questions}..."
 

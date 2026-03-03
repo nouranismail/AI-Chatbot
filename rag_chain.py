@@ -95,7 +95,7 @@ def is_question_relevant(question, context, chat_history=None):
     )
 
     response = llm.invoke(prompt).content.strip().lower()
-    return "relevant" in response
+    return response == "relevant"
 
 
 
@@ -114,12 +114,13 @@ def ask_question(question):
         chain = prompt | get_llm() | StrOutputParser()
         return chain.invoke({"input": question})
 
+    filled_prompt = RAG_SYSTEM_PROMPT.format(context=context)
     prompt = ChatPromptTemplate.from_messages([
-        ("system", RAG_SYSTEM_PROMPT),
+        ("system", filled_prompt),
         ("user", "{input}"),
     ])
     chain = prompt | get_llm() | StrOutputParser()
-    return chain.invoke({"input": question, "context": context})
+    return chain.invoke({"input": question})
 
 
 def ask_question_stream(question, chat_history=None):

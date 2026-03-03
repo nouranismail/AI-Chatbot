@@ -146,7 +146,11 @@ def handle_evaluate(num_questions):
 
             if line.startswith(":::REPORT:::"):
                 report_json = line.replace(":::REPORT:::", "")
-                report_data = json.loads(report_json)
+                try:
+                    report_data = json.loads(report_json)
+                except json.JSONDecodeError as e:
+                    yield progress + f"\nFailed to parse report: {e}", "Report parsing failed."
+                    return
                 progress += "\nDone!\n"
                 yield progress, format_report(report_data)
             else:
